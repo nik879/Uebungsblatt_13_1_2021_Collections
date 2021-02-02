@@ -1,6 +1,8 @@
 package Beispiel_2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Wassserstandsmanager {
 
@@ -81,6 +83,97 @@ public class Wassserstandsmanager {
         }
         return InZeitspanne;
     }
+
+    public HashMap<String, ArrayList<Wasserstand>> getAllWasserstaenderPerGewaesser() {
+        HashMap<String, ArrayList<Wasserstand>> Hash = new HashMap<>();
+        for (Wasserstand w : wasserstände) {
+            if (Hash.containsKey(w.getGewässername())) {
+                ArrayList<Wasserstand> listewasserstände = Hash.get(w.getGewässername());
+                listewasserstände.add(w);
+                Hash.put(w.getGewässername(), listewasserstände);
+            } else {
+                ArrayList<Wasserstand> listewasserstände = new ArrayList<>();
+                listewasserstände.add(w);
+                Hash.put(w.getGewässername(), listewasserstände);
+            }
+        }
+        return Hash;
+    }
+
+    public HashMap<Integer, ArrayList<Wasserstand>> getAllWasserstaendePerZeitpunkt() {
+        HashMap<Integer, ArrayList<Wasserstand>> Hash = new HashMap<>();
+        for (Wasserstand w : wasserstände) {
+            if (Hash.containsKey(w.getZeitpunkt())) {
+                ArrayList<Wasserstand> listewasserstände = Hash.get(w.getGewässername());
+                listewasserstände.add(w);
+                Hash.put(w.getZeitpunkt(), listewasserstände);
+            } else {
+                ArrayList<Wasserstand> listewasserstände = new ArrayList<>();
+                listewasserstände.add(w);
+                Hash.put(w.getZeitpunkt(), listewasserstände);
+            }
+        }
+        return Hash;
+    }
+
+//    public HashMap<String, Integer> getNumberOfAlarmsPerGewaessser() {
+//        HashMap<String, Integer> Hash = new HashMap<>();
+//        int anzahl=0;
+//        for (Wasserstand w :
+//                wasserstände) {
+//            if (Hash.containsKey(w.getGewässername())) {
+//                if (w.getMesswert() >= w.getMesswerfüralarmierung()) {
+//                    anzahl++;
+//                    Hash.put(w.getGewässername(), anzahl);
+//                }
+//            } else {
+//                Hash.put(w.getGewässername(), anzahl);
+//            }
+//        }
+//        return Hash;
+//    }
+
+    public HashMap<String, Integer> getNumberOfAlarmsPerGewaesser() {
+        HashMap<String, Integer> resultMap = new HashMap<>();
+        for(Wasserstand w : wasserstände) {
+            if(resultMap.containsKey(w.getGewässername())) {
+                resultMap.put(
+                        w.getGewässername(),
+                        resultMap.get(w.getGewässername())+1
+                );
+            } else {
+                resultMap.put(w.getGewässername(),1);
+            }
+        }
+        return resultMap;
+    }
+
+    public HashMap<String, Double> getAvgMesswertPerGewaesser() {
+        HashMap<String, ArrayList<Wasserstand>> tempMap = new HashMap<>();
+
+        for(Wasserstand w : wasserstände) {
+            ArrayList<Wasserstand> wasserstaende;
+            if(tempMap.containsKey(w.getGewässername())) {
+                wasserstaende = tempMap.get(w.getGewässername());
+            } else {
+                wasserstaende = new ArrayList<>();
+            }
+            wasserstaende.add(w);
+            tempMap.put(w.getGewässername(),wasserstaende);
+        }
+
+        HashMap<String, Double> resultMap = new HashMap<>();
+        for(Map.Entry<String,ArrayList<Wasserstand>> e : tempMap.entrySet()) {
+            double sum = 0.0;
+            for(Wasserstand w : e.getValue()) {
+                sum += w.getMesswert();
+            }
+            resultMap.put(e.getKey(),sum/e.getValue().size());
+        }
+        return resultMap;
+
+    }
+
 
 
 
